@@ -1,0 +1,197 @@
+---
+title: "Myungje_Kim_Final_Project"
+author: "Myungje Kim"
+format: pdf
+editor: visual
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(openintro)
+library(gridExtra)
+```
+
+```{r}
+data("birds")
+```
+
+```{r}
+#birds_all <- birds |>
+#  select(phase_of_flt, time_of_day, state) |>
+#  filter(!is.na(phase_of_flt), !is.na(time_of_day), !is.na(state)) |>
+##  mutate(region = if_else(state == "CA", "CA", "Other"))
+
+#ggplot(birds_all,
+#       aes(y = fct_rev(fct_infreq(phase_of_flt)),
+#           fill = region)) +
+#  geom_bar() +
+#  coord_flip() +
+#  facet_wrap(~ time_of_day) +
+#  labs(title = "title",
+#       x = "x",
+#       y = "y",
+ #      fill = NULL)
+```
+
+This data has phase of flight and time of day as factors. birds adj 2 and 3 is just to show that 16671 has the same observations when I filter it with NAs one by one.
+
+```{r}
+birds_all_states <- birds |>
+  select(phase_of_flt, time_of_day, state) |>
+  na.omit()
+
+birds_CA <- birds |>
+  select(phase_of_flt, time_of_day, state) |>
+  na.omit() |>
+  filter(state == "CA") |>
+  mutate(
+    phase_of_flt = as.factor(phase_of_flt),
+    time_of_day = as.factor(time_of_day)
+  )
+
+birds_CA
+
+birds_Otherst <- birds |>
+  select(phase_of_flt, time_of_day, state) |>
+  na.omit() |>
+  filter(state != "CA") |>
+  mutate(
+    phase_of_flt = as.factor(phase_of_flt),
+    time_of_day = as.factor(time_of_day)
+  )
+
+nrow(birds_CA) + nrow(birds_Otherst) == nrow(birds_all_states)
+
+#birds_adj2 <- birds |>
+#  filter(!is.na(phase_of_flt)) |>
+#  mutate(
+#    phase_of_flt = as.factor(phase_of_flt)
+#  )
+         
+
+#birds_adj3 <- birds_adj2 |>
+#  filter(!is.na(time_of_day)) |>
+#  mutate(
+#    time_of_day = as.factor(time_of_day)
+#  )
+
+
+#birds_adj2
+#unique(birds_adj2$phase_of_flt)
+
+#birds_adj3
+#unique(birds_adj2$time_of_day)
+```
+
+Checking if there is NA values in each dataset.
+
+```{r}
+#birds |>
+#  select(state) |>
+#  count(state == "NA")
+
+#birds_CA |>
+#  select(state) |>
+#  count(state == "NA")
+
+#birds_Otherst |>
+#  select(state) |>
+#  count(state == "NA")
+
+```
+
+# Data filtering
+
+```{r}
+plot1_data <- birds |>
+  select(phase_of_flt, state) |>
+  filter(!is.na(phase_of_flt), !is.na(state)) |>
+           mutate(state1 = ifelse(state == "CA", "CA", "Other States"))
+
+plot2_data <- birds |>
+  select(phase_of_flt, time_of_day, state) |>
+  filter(!is.na(phase_of_flt), !is.na(state), !is.na(time_of_day)) |>
+  mutate(state2 = if_else(state == "CA", "CA", "Other States"))
+```
+
+# Plot 1
+
+Version 1
+
+```{r}
+ggplot(plot1_data,
+       aes(x = fct_rev(fct_infreq(phase_of_flt)),
+           fill = state1)) +
+  geom_bar() +
+  coord_flip() +
+  labs(title = "Collision Frequency vs Phase Of Flight ",
+       x = "Frequency(Collision)",
+       y= "Phase of Flight",
+       fill = NULL)
+
+```
+
+Version 2
+
+```{r}
+p1 <- ggplot(birds_CA ,aes(x = fct_rev(fct_infreq(phase_of_flt)), fill = phase_of_flt)) +
+  geom_bar(show.legend = FALSE) +
+  coord_flip() +
+  labs(title = " Frequency by Phase: CA",
+       y = "Collision frequency",
+       x = "Phase of Flight")
+
+p2 <- ggplot(birds_Otherst ,aes(x = fct_rev(fct_infreq(phase_of_flt)), fill = phase_of_flt)) +
+  geom_bar(show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Frequency by Phase: Other States",
+       y = "Collision frequency",
+       x = "Phase of Flight")
+
+grid.arrange(p1, p2, nrow = 1)
+```
+
+This plot compares California and other states in terms of which **flight phase** had the most bird collisions.\
+In both groups, most collisions happen during the **approach** and **landing** phases. This is expected because planes are flying lower and slower then, which increases the chance to hit birds.
+
+In **California**, the collisions are more evenly spread across all phases, while in **other states**, they are mainly in one or two phases, especially during **approach**.\
+Even if the scales are different, the trend is the same: the **approach phase** has the most collisions in both cases.
+
+# Plot2
+
+```{r}
+p3 <- plot2_data |>
+  filter(state2 == "CA") |>
+  ggplot(aes(x = fct_infreq(phase_of_flt), fill = time_of_day)) +
+  geom_bar(position = position_dodge(width = 0.8), width = 0.7) +
+  facet_wrap(~state2, ncol = 2) +
+  labs(title = "Phase of Flight vs Time of Day (CA)",
+       x = "Phase Of Flight",
+       y = "Time of Day")
+```
+
+```{r}
+p4 <- plot2_data |>
+  filter(state2 != "CA") |>
+  ggplot(aes(x = fct_infreq(phase_of_flt), fill = time_of_day)) +
+  geom_bar(position = position_dodge(width = 0.8), width = 0.7) +
+  facet_wrap(~state2, ncol = 2) + 
+  labs(title = "Phase of Flight vs Time of Day (Other States)",
+       x = "Phase Of Flight",
+       y = "Time of Day")
+
+```
+
+This plot shows how **time of day** affects collisions for California and other states.\
+In both places, most collisions happen during the **daytime**, and there are fewer at **night** or **dawn/dusk**.
+
+In **California**, the collisions during the day are more spread across different flight phases. But in **other states**, they are mostly concentrated in the **approach phase** during the day.\
+So even though the number of collisions is not on the same scale, the pattern is clear: **daytime and approach phase** are the most common times for bird collisions in both California and other states.
+
+```{r}
+grid.arrange(p3, p4, nrow = 1)
+```
