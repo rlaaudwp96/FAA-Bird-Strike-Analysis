@@ -76,6 +76,7 @@ This project was conducted as part of our data analysis coursework:
 ```text
 ├── birds.csv                # Raw bird strike dataset
 ├── Final_Project.qmd        # Quarto Markdown script with EDA & Visualizations
+├── bird_strike_analysis.R   # Reproducible R analysis script
 └── README.md                # Project documentation
 ```
 
@@ -87,7 +88,7 @@ This project was conducted as part of our data analysis coursework:
    git clone [https://github.com/rlaaudwp96/FAA-Bird-Strike-Analysis.git](https://github.com/rlaaudwp96/FAA-Bird-Strike-Analysis.git)
    cd FAA-Bird-Strike-Analysis
    ```
-2. **Open Project:** Open `Final_Project.qmd` in **RStudio**.
+2. **Open Project:** Open `Final_Project.qmd` in **RStudio**, or run `Rscript bird_strike_analysis.R`.
 3. **Install Packages:** Run the following command in the R console:
    ```R
    install.packages(c("tidyverse", "openintro", "gridExtra"))
