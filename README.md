@@ -3,7 +3,7 @@
 ## Business Problem & Overview
 Bird strikes pose significant safety risks and financial costs to aviation safety. Understanding when and where these strikes occur—such as during specific flight phases or times of day—helps airports and flight operators optimize wildlife management and hazard mitigation protocols.
 
-This project analyzes the **FAA Bird Strike Dataset** using **R** to evaluate collision frequencies across flight phases (`phase_of_flt`) and times of day (`time_of_day`), with a special comparative focus on **California (CA)** versus **other US states**.
+This project analyzes the **FAA Bird Strike Dataset** using **R** to evaluate collision frequencies across flight phases (`phase_of_flt`) and times of day (`time_of_day`), with a special comparative focus on **California (CA)** versus **other US states**. The R workflow is the primary implementation.
 
 ---
 
@@ -77,6 +77,7 @@ This project was conducted as part of our data analysis coursework:
 ├── birds.csv                # Raw bird strike dataset
 ├── Final_Project.qmd        # Quarto Markdown script with EDA & Visualizations
 ├── bird_strike_analysis.R   # Reproducible R analysis script
+├── bird_strike_analysis_python.py # Supplemental Python conversion
 └── README.md                # Project documentation
 ```
 
@@ -98,5 +99,6 @@ This project was conducted as part of our data analysis coursework:
 ---
 
 ## 🛠️ Tech Stack
-* **Language:** R
+* **Primary Language:** R
 * **Libraries:** `tidyverse` (`ggplot2`, `dplyr`, `forcats`), `openintro`, `gridExtra`
+* **Supplemental:** Python conversion for reproducible command-line analysis
