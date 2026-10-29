@@ -1,104 +1,107 @@
-# 🦅 FAA Aircraft Bird Strike Analysis: CA vs. Other States
+# FAA Bird Strike Analysis
 
-## Business Problem & Overview
-Bird strikes pose significant safety risks and financial costs to aviation safety. Understanding when and where these strikes occur—such as during specific flight phases or times of day—helps airports and flight operators optimize wildlife management and hazard mitigation protocols.
+### Compare collision-risk patterns in California and other U.S. states with R
 
-This project analyzes the **FAA Bird Strike Dataset** using **R** to evaluate collision frequencies across flight phases (`phase_of_flt`) and times of day (`time_of_day`), with a special comparative focus on **California (CA)** versus **other US states**. The R workflow is the primary implementation.
+[![R](https://img.shields.io/badge/Primary%20language-R-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
+[![Visualization](https://img.shields.io/badge/Visualization-ggplot2-2D6DB1)](https://ggplot2.tidyverse.org/)
+[![Quarto](https://img.shields.io/badge/Report-Quarto-39729E)](https://quarto.org/)
 
----
+Bird strikes create safety risks, operational disruptions, and financial costs for aviation. This R project explores when and where collisions occur by comparing California with other U.S. states across flight phase and time of day.
 
-## Key Results & Insights
-* **Primary Collision Phase:** Across all regions, the majority of bird strikes occur during the **Approach** and **Landing** flight phases. This aligns with lower altitude and lower speed operations where bird density is highest.
-* **Regional Distribution Differences:**
-  * **California (CA):** Collision frequencies are relatively evenly spread across multiple flight phases compared to other regions.
-  * **Other States:** Bird strikes are heavily concentrated specifically in the **Approach** phase.
-* **Temporal Patterns:** In both California and other states, collisions predominantly occur during **Daytime** compared to Night, Dawn, or Dusk.
+The primary implementation is R with tidyverse and ggplot2. A supplemental Python conversion is included for command-line reproducibility, but the original R workflow remains the representative project implementation.
 
----
+## Contents
 
-## Data & Feature Preprocessing
-* **Dataset Source:** `openintro::birds` dataset containing historical FAA wildlife collision logs.
-* **Data Cleaning:**
-  1. Handled missing records (`NA`) across key categorical factors (`phase_of_flt`, `time_of_day`, `state`).
-  2. Filtered and recoded geographical state categories into binary indicators (`CA` vs. `Other States`).
-  3. Re-ordered factor levels based on frequency using `forcats` (`fct_infreq`, `fct_rev`) for clear visual reporting.
+- [Why this matters](#why-this-matters)
+- [Key findings](#key-findings)
+- [Quick start in R](#quick-start-in-r)
+- [Technical workflow](#technical-workflow)
+- [Project structure](#project-structure)
+- [Limitations and known issues](#limitations-and-known-issues)
+- [Contribution](#contribution)
+- [Support](#support)
+- [License](#license)
 
----
+## Why this matters
 
-## 💻 Core R Code Snippets
+An airport or flight-operations team could use this analysis to ask:
 
-### 1. Data Cleaning & Regional Classification
-```R
-library(tidyverse)
-library(openintro)
+- Which flight phases have the most reported collisions?
+- Do California collision patterns differ from other states?
+- Are collisions more common during daytime, dawn, dusk, or night?
 
-# Cleaning and mapping region indicators
-birds_CA <- birds %>%
-  select(phase_of_flt, time_of_day, state) %>%
-  na.omit() %>%
-  filter(state == "CA") %>%
-  mutate(
-    phase_of_flt = as.factor(phase_of_flt),
-    time_of_day = as.factor(time_of_day)
-  )
+The visuals are designed to make those comparisons easy to inspect rather than hide them behind a single score.
+
+## Key findings
+
+- Approach and landing account for a large share of collisions across regions.
+- Other states show a stronger concentration in the approach phase.
+- California collisions are more evenly distributed across several flight phases.
+- Daytime collisions are more common than night, dawn, or dusk collisions in both groups.
+
+## Quick start in R
+
+### Prerequisites
+
+- R 4.2 or newer
+- RStudio recommended
+- Quarto for rendering the report
+
+```r
+install.packages(c("tidyverse", "openintro", "gridExtra"))
 ```
 
-### 2. Visualizing Collision Frequency by Flight Phase & Region
-```R
-library(gridExtra)
+Open `Final_Project.qmd` in RStudio, or run the reproducible script:
 
-# Comparing California vs Other States
-p1 <- ggplot(birds_CA, aes(x = fct_rev(fct_infreq(phase_of_flt)), fill = phase_of_flt)) +
-  geom_bar(show.legend = FALSE) +
-  coord_flip() +
-  labs(title = "Frequency by Phase: CA", y = "Collision Frequency", x = "Phase of Flight")
-
-p2 <- ggplot(birds_Otherst, aes(x = fct_rev(fct_infreq(phase_of_flt)), fill = phase_of_flt)) +
-  geom_bar(show.legend = FALSE) +
-  coord_flip() +
-  labs(title = "Frequency by Phase: Other States", y = "Collision Frequency", x = "Phase of Flight")
-
-grid.arrange(p1, p2, nrow = 1)
+```r
+source("bird_strike_analysis.R")
 ```
 
----
+The supplemental Python conversion can be run with:
 
-## 👥 Contributors
-This project was conducted as part of our data analysis coursework:
+```powershell
+python bird_strike_analysis_python.py
+```
 
-* **Myungje Kim**
-* **Jennifer Soper**
-* **Gizem Ozyildirim**
+## Technical workflow
 
----
+```mermaid
+flowchart LR
+    A[FAA bird-strike records] --> B[Remove missing key fields]
+    B --> C[Create CA vs Other States groups]
+    C --> D[Summarize flight phase]
+    C --> E[Summarize time of day]
+    D --> F[Comparative ggplot2 visuals]
+    E --> F
+```
 
-## 📁 Project Structure
+## Project structure
+
 ```text
-├── birds.csv                # Raw bird strike dataset
-├── Final_Project.qmd        # Quarto Markdown script with EDA & Visualizations
-├── bird_strike_analysis.R   # Reproducible R analysis script
-├── bird_strike_analysis_python.py # Supplemental Python conversion
-└── README.md                # Project documentation
+FAA-Bird-Strike-Analysis/
+├── birds.csv                       # FAA bird-strike data
+├── Final_Project.qmd               # Primary Quarto report
+├── bird_strike_analysis.R          # Primary R analysis
+├── bird_strike_analysis_python.py  # Supplemental Python conversion
+├── Myungje_Kim_Final_Project.pdf   # Rendered project report
+└── README.md
 ```
 
----
+## Limitations and known issues
 
-## 🚀 How to Reproduce
-1. **Clone this repository:**
-   ```bash
-   git clone [https://github.com/rlaaudwp96/FAA-Bird-Strike-Analysis.git](https://github.com/rlaaudwp96/FAA-Bird-Strike-Analysis.git)
-   cd FAA-Bird-Strike-Analysis
-   ```
-2. **Open Project:** Open `Final_Project.qmd` in **RStudio**, or run `Rscript bird_strike_analysis.R`.
-3. **Install Packages:** Run the following command in the R console:
-   ```R
-   install.packages(c("tidyverse", "openintro", "gridExtra"))
-   ```
-4. **Render Document:** Render the Quarto document to PDF or HTML to reproduce all comparative bar charts and distribution summaries.
+- Reported collisions may reflect reporting and airport-traffic differences, not only underlying risk.
+- The comparison is descriptive and does not estimate causal effects.
+- The dataset does not include exposure measures such as flights or takeoffs by airport.
+- The supplemental Python script is intended to reproduce the summary workflow, not replace the R report.
 
----
+## Contribution
 
-## 🛠️ Tech Stack
-* **Primary Language:** R
-* **Libraries:** `tidyverse` (`ggplot2`, `dplyr`, `forcats`), `openintro`, `gridExtra`
-* **Supplemental:** Python conversion for reproducible command-line analysis
+Open an issue with a reproducible example, keep primary analysis changes in the R files, and include rendered output or a clear description of visual changes in a pull request.
+
+## Support
+
+Use GitHub Issues or connect with [Myungje Kim on LinkedIn](https://www.linkedin.com/in/evan-kim-257857249/).
+
+## License
+
+No open-source license has been specified yet. Contact the repository owner before redistributing or adapting the code.
